@@ -33,7 +33,10 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/", "/index", "/home", "/css/*", "/js/*").permitAll()
                 .antMatchers("/api/**").hasRole(STUDENT.name())
-                .antMatchers("/management/**").hasRole(ADMIN.name())
+                .antMatchers(HttpMethod.DELETE, "/management/**").hasAuthority(STUDENT_WRITE.getPermission())
+                .antMatchers(HttpMethod.POST, "/management/**").hasAuthority(STUDENT_WRITE.getPermission())
+                .antMatchers(HttpMethod.PUT, "/management/**").hasAuthority(STUDENT_WRITE.getPermission())
+                .antMatchers(HttpMethod.GET, "/management/**").hasAnyRole(ADMIN.name(), ADMIN_TRAINEE.name())
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -47,19 +50,22 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         UserDetails dany = User.builder()
                 .username("dany")
                 .password(passwordEncoder.encode("dany"))
-                .roles(STUDENT.name()) //ROLE_STUDENT
+                //.roles(STUDENT.name()) //ROLE_STUDENT
+                .authorities(STUDENT.getAuthorities())
                 .build();
 
         UserDetails admin = User.builder()
                 .username("admin")
                 .password(passwordEncoder.encode("admin"))
-                .roles(ADMIN.name()) //ROLE_ADMIN
+                //.roles(ADMIN.name()) //ROLE_ADMIN
+                .authorities(ADMIN.getAuthorities())
                 .build();
 
         UserDetails adminTrainee = User.builder()
                 .username("admin2")
                 .password(passwordEncoder.encode("admin"))
-                .roles(ADMIN_TRAINEE.name()) //ROLE_ADMIN
+                //.roles(ADMIN_TRAINEE.name()) //ROLE_ADMIN
+                .authorities(ADMIN_TRAINEE.getAuthorities())
                 .build();
 
         return new InMemoryUserDetailsManager(

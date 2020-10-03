@@ -1,17 +1,16 @@
 package com.ddf.training.springsecurity.services;
 
 import com.ddf.training.springsecurity.domain.Student;
-import lombok.Getter;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
-@Getter
 public class StudentServiceImpl implements StudentService{
 
-    private static List<Student> STUDENTS = List.of(
+    private static List<Student> students = List.of(
             new Student(1L, "Franky Mbieleu"),
             new Student(2L, "Innocent Tialo"),
             new Student(3L, "Steves Kamdem"),
@@ -19,8 +18,13 @@ public class StudentServiceImpl implements StudentService{
             new Student(5L, "Dany Koudja")
     );
 
+    @Override
+    public List<Student> listAll(){
+        return students;
+    }
+
     public Student getStudent(Long id){
-        return STUDENTS.stream()
+        return students.stream()
                 .filter(student -> student.getId().equals(id))
                 .findFirst()
                 .orElseThrow(()-> new NoSuchElementException("Student "+ id + " does not exist."));
@@ -28,7 +32,7 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
     public Student getDetails(Long id) {
-        return STUDENTS.stream()
+        return students.stream()
                 .filter(student -> student.getId().equals(id))
                 .findFirst()
                 .orElseThrow(()-> new NoSuchElementException("Student "+ id + " does not exist."));
@@ -36,27 +40,29 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
     public Student create(Student entity) {
-        Long id = STUDENTS.stream()
+        Long id = students.stream()
                 .map(Student::getId)
                 .max(Long::compare)
-                .orElse(1L);
-        entity.setId(id);
-        STUDENTS.add(entity);
+                .orElse(1L)     ;
+        entity.setId(id + 1);
+        List<Student> list = new ArrayList<>(students);
+        list.add(entity);
+        students = list;
         return  entity;
     }
 
     @Override
     public void delete(Long id) {
-        STUDENTS.remove(getDetails(id));
+        students.remove(getDetails(id));
     }
 
     @Override
     public Student update(Student entity) {
-        Student studentToUpdate = STUDENTS.stream()
+        Student studentToUpdate = students.stream()
                 .filter(student -> student.getId().equals(entity.getId()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("The student of id " + entity.getId() + " does not exist."));
-        STUDENTS.add(STUDENTS.indexOf(studentToUpdate), entity);
+        students.add(students.indexOf(studentToUpdate), entity);
         return entity;
     }
 }

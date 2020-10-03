@@ -1,5 +1,6 @@
 package com.ddf.training.springsecurity.security;
 
+import com.ddf.training.springsecurity.enums.UserRole;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,6 +11,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+
+import static com.ddf.training.springsecurity.enums.UserRole.ADMIN;
+import static com.ddf.training.springsecurity.enums.UserRole.STUDENT;
 
 @Configuration
 @EnableWebSecurity
@@ -40,8 +44,18 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         UserDetails dany = User.builder()
                 .username("dany")
                 .password(passwordEncoder.encode("dany"))
-                .roles("STUDENT") //ROLE_STUDENT
+                .roles(STUDENT.name()) //ROLE_STUDENT
                 .build();
-        return new InMemoryUserDetailsManager(dany);
+
+        UserDetails admin = User.builder()
+                .username("admin")
+                .password(passwordEncoder.encode("admin"))
+                .roles(ADMIN.name()) //ROLE_ADMIN
+                .build();
+
+        return new InMemoryUserDetailsManager(
+                dany,
+                admin
+        );
     }
 }

@@ -62,7 +62,10 @@ public class StudentServiceImpl implements StudentService{
                 .filter(student -> student.getId().equals(entity.getId()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("The student of id " + entity.getId() + " does not exist."));
-        students.add(students.indexOf(studentToUpdate), entity);
+
+        List<Student> list = new ArrayList<>(students);
+        list.add(students.indexOf(studentToUpdate), entity);
+        students = list;
         return entity;
     }
 }

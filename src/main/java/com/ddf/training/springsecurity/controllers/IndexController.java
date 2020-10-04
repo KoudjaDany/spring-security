@@ -13,4 +13,15 @@ public class IndexController {
     public String getIndexPage(){
         return "index";
     }
+
+    @GetMapping({"login", "sign-in"})
+    public String getLoginPage(){
+        return "login";
+    }
+
+    @GetMapping({"courses"})
+    public String getCourses(){
+        return "courses";
+    }
+
 }

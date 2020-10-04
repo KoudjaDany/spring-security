@@ -1,6 +1,7 @@
 package com.ddf.training.springsecurity.security;
 
 import com.ddf.training.springsecurity.jwt.JwtUsernameAndPasswordAuthenticationFilter;
+import com.ddf.training.springsecurity.jwt.JwtVerifier;
 import com.ddf.training.springsecurity.services.ApplicationUserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +40,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager()))
+                .addFilterAfter(new JwtVerifier(), JwtUsernameAndPasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/", "/index", "/home", "/css/*", "/js/*").permitAll()
                 .antMatchers("/api/**").hasRole(STUDENT.name())
